@@ -1,41 +1,68 @@
 # LocalPorts
 
-A native macOS menu-bar utility for seeing which processes are listening on TCP ports.
-Built with Swift, AppKit and SwiftUI, with no third-party dependencies.
+A lightweight macOS menu-bar app for finding local TCP ports and the processes using them.
 
-**macOS 13 or later · Intel (x86_64) · English-first · MIT**
+**macOS 13+ · Intel (x86_64) · MIT · No third-party dependencies**
 
-![LocalPorts expanded light appearance](docs/images/demo-light.png)
+## Download and open
 
-*Synthetic demo rendered by LocalPorts: example processes, metrics and directories, not a real user's system. Light and [dark](docs/images/demo-dark.png) appearances are available. Scroll to reach details below the viewport.*
+1. Download **[LocalPorts-1.0.0-macOS-Intel.zip](https://github.com/chohcx/LocalPorts/releases/download/v1.0.0/LocalPorts-1.0.0-macOS-Intel.zip)** from [Releases](https://github.com/chohcx/LocalPorts/releases/latest).
+2. Unzip it and drag **LocalPorts.app** into **Applications**.
+3. Double-click **LocalPorts.app** to launch.
+4. Click its **icon and port count in the macOS menu bar**. There is no Dock icon.
 
-## Install
+The download is ad-hoc signed, **not Apple-notarized**. If macOS blocks it, verify the download and use **System Settings → Privacy & Security → Open Anyway**, if offered. Do not disable Gatekeeper globally. Apple Silicon is not a tested release target.
 
-Download `LocalPorts-1.0.0-macOS-Intel.zip` and its `.sha256` file from
-[Releases](https://github.com/chohcx/LocalPorts/releases). If a binary release is not available, build from source below.
+Optional checksum verification: download the matching `.sha256` file into the same folder as the ZIP, then run:
 
 ```sh
 shasum -a 256 -c LocalPorts-1.0.0-macOS-Intel.zip.sha256
 ```
 
-Unzip, optionally drag `LocalPorts.app` into Applications, and open it. Click the menu-bar icon and count; there is no Dock icon. Use **Options → Quit LocalPorts** to exit.
+## Launch from Terminal
 
-The binary is **ad-hoc signed, not Developer ID signed or notarized**. Gatekeeper may block a downloaded copy. Only after verifying its source and checksum, use macOS **System Settings → Privacy & Security → Open Anyway**, if offered. Building locally is an alternative; do not disable Gatekeeper globally. Checksums detect corruption, not publisher identity.
+After installing in Applications:
 
-The packaged build targets Intel and has been tested on macOS 13.7.6 with Swift 5.9.2. Apple Silicon is not a tested or distributed target. No administrator access, login item or background daemon is installed.
+```sh
+open -a LocalPorts
+```
 
-## Features
+Prefer typing **`LP`**? Add this line to `~/.zshrc` (the default macOS shell), then open a new Terminal window:
 
-- Search by executable, project directory name, PID, address or port; optional developer-process name filter.
-- Show port, host, executable, process uptime, CPU and resident memory. Expand a row for PID, directory, raw binding and endpoint.
-- Open or copy an HTTP URL, reveal a directory in Finder, or open a **new** Terminal window there—not the original terminal tab.
-- Stop an owned process with confirmation and a fresh UID/start-identity check. **Cancel is the default**; only SIGTERM is used, never automatic SIGKILL or privilege escalation.
-- Quiet background polling: approximately every 2 seconds while open and 10 seconds while closed. No overlapping scans or polling animation.
-- Fixed 500 × 430 pt panel with a 330 pt scroll viewport, full-row disclosure, brief interaction animations, light/dark appearance and Reduce Motion support.
+```sh
+alias LP='open -a LocalPorts'
+```
+
+You can then launch the app with:
+
+```sh
+LP
+```
+
+`LP` is an optional shell alias, not an automatically installed command. It opens the same menu-bar app, not a separate terminal interface. To try it only in the current Terminal, run the alias line there without editing `~/.zshrc`.
+
+## Use LocalPorts
+
+- **Browse:** See each port, project/process name, runtime, uptime, CPU and memory.
+- **Search:** Filter by name, project, PID, address or port.
+- **Expand a row:** Click anywhere on it to view details and action buttons. Scroll for more entries.
+- **Take action:** Open an HTTP URL, copy it, reveal the working directory in Finder, or open a new Terminal window there. Hover over an icon for its label.
+- **Stop a process:** Click the stop icon and confirm. This sends SIGTERM to the entire owned process, including its other ports; unsaved work may be lost.
+- **Filter or quit:** Use the top-right **Options** menu.
+
+Updates happen quietly about every **2 seconds while open** and **10 seconds while closed**. No setup, administrator access or login item is required.
+
+### Binding vs. Endpoint
+
+**Binding** is the actual listening address; **Endpoint** is a convenient host-and-port address for connecting from your Mac.
+
+For example, `Binding: *` can display `Endpoint: localhost:3000`. The wildcard means all applicable local interfaces—not localhost-only access. Specific IP addresses are preserved where applicable.
+
+URL actions assume **HTTP**. LocalPorts cannot infer HTTPS, custom domains, reverse-proxy routes or tunnel URLs from a listening port. It lists TCP listeners visible to your account, not UDP services. Inspection stays local, with no telemetry; see [Security and privacy](SECURITY.md).
 
 ## Build from source
 
-Requires macOS 13+, Xcode or Command Line Tools with Swift 5.9+, and Python 3 for verification. System `lsof`, `ps`, `codesign` and `ditto` are used.
+Requires macOS 13+, Xcode or Command Line Tools with Swift 5.9+, and Python 3 for verification.
 
 ```sh
 git clone https://github.com/chohcx/LocalPorts.git
@@ -45,51 +72,10 @@ swift test
 open dist/LocalPorts.app
 ```
 
-To build, verify and package the Intel release:
+To use `open -a LocalPorts` or the `LP` alias with this build, first copy `dist/LocalPorts.app` to Applications. To produce a verified ZIP and checksum, run `./scripts/release.sh` in an interactive macOS login session.
 
-```sh
-./scripts/release.sh
-```
+See [Contributing](CONTRIBUTING.md) for development and testing. Diagnostic output may contain private process and directory names; review it before sharing.
 
-Outputs are under `dist/`: the app, versioned ZIP and SHA-256 file. The script also checks the extracted archive's signature and bundle metadata. Generated artifacts and diagnostics are not source files and must not be committed.
+Independent implementation inspired by [Ports](https://www.ports-app.com/); not affiliated with its authors. No Ports code or artwork is included. Icons use system SF Symbols at runtime.
 
-## Tests
-
-Run GUI checks in an interactive macOS login session (not a headless CI runner):
-
-```sh
-swift test
-./scripts/build-app.sh
-python3 scripts/verify_ui_contract.py
-python3 scripts/verify_bundle.py dist/LocalPorts.app
-python3 scripts/verify_layout.py dist/LocalPorts.app/Contents/MacOS/LocalPorts
-python3 scripts/verify_jitter.py dist/LocalPorts.app/Contents/MacOS/LocalPorts
-```
-
-Unit/integration tests cover parsing, deduplication, search, endpoints, elapsed-time formatting, process identity and termination of a disposable test-owned server. Native checks cover status-item geometry/clicks, disclosure hit targets, clipboard behavior, fixed-window/header stability, intermediate animation frames and scroll access. Source contracts supplement—not replace—native tests. Browser/Finder/Terminal launches, the Options menu, keyboard navigation, hover appearance and the confirmation dialog still require manual acceptance checks; see [CONTRIBUTING.md](CONTRIBUTING.md).
-
-`--diagnose` prints a JSON snapshot without opening the UI or stopping processes. **It can contain private executable and directory names**; review and redact before sharing. `scripts/measure_overhead.py` measures local overhead rather than claiming universal performance or energy impact.
-
-## Limitations and safety
-
-- TCP listeners visible to the current user's `lsof` permissions only; no UDP/UNIX sockets or privileged complete-system inventory. Short-lived listeners can be missed by polling.
-- Developer classification is a filename heuristic, not framework detection. CPU is the `ps` statistic; uptime belongs to the process, not the port. Multiple rows for one PID repeat the same metrics—do not sum them.
-- Binding preserves the actual interface. Display endpoints alias wildcard/loopback hosts to `localhost`; a wildcard does **not** imply loopback-only exposure. URL actions preserve explicit loopback IP families.
-- URL actions assume HTTP. No TLS/protocol probing, custom-domain, proxy, tunnel or path-prefix discovery. Non-HTTP services may not work in a browser.
-- Directory and identity information can be unavailable due to permissions or process exit. Unavailable directory actions are disabled.
-- SIGTERM affects the entire process and all its ports, may lose unsaved work, and can be ignored. Identity is rechecked immediately before signaling, but the final check/kill race cannot be eliminated by this implementation.
-- System-provided error messages follow the OS language; app-owned labels and errors are English.
-
-## Privacy
-
-Inspection runs locally. No telemetry, analytics, remote service, updater or full command-line/environment collection is implemented. It reads listener metadata, process identity, resource metrics and working directories. Opening a URL deliberately hands it to the default browser, which may make network requests. See [SECURITY.md](SECURITY.md).
-
-## Project
-
-- `Sources/PortsCore`: parsing, inspection, identity checks and presentation helpers.
-- `Sources/LocalPorts`: native menu-bar app and deterministic UI evidence modes.
-- `Tests/PortsCoreTests` and `scripts`: repeatable checks and packaging.
-
-Independent implementation inspired by [Ports](https://www.ports-app.com/); not affiliated with or endorsed by its authors. No Ports artwork or code is included. Icons use macOS system SF Symbols at runtime; Apple assets are not separately redistributed or relicensed under MIT.
-
-[MIT License](LICENSE) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md)
+[MIT License](LICENSE)
