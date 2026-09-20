@@ -11,7 +11,19 @@ A lightweight macOS menu-bar app for finding local TCP ports and the processes u
 3. Double-click **LocalPorts.app** to launch.
 4. Click its **icon and port count in the macOS menu bar**. There is no Dock icon.
 
-The download is ad-hoc signed, **not Apple-notarized**. If macOS blocks it, verify the download and use **System Settings → Privacy & Security → Open Anyway**, if offered. Do not disable Gatekeeper globally. Apple Silicon is not a tested release target.
+### First launch: if macOS blocks the app
+
+LocalPorts is ad-hoc signed, **not Developer ID signed or notarized by Apple**. macOS may say that the developer cannot be verified or that Apple cannot check the app for malicious software. This means Apple has not verified this release; it is not a guarantee that the app is safe. Only proceed if you trust this repository and downloaded the app from its Releases page.
+
+1. Try opening **LocalPorts.app** once, then dismiss the warning without moving the app to the Trash.
+2. Open **Apple menu → System Settings → Privacy & Security**.
+3. Scroll to **Security** and find the message about LocalPorts being blocked. Click **Open Anyway**, if offered.
+4. Authenticate on your Mac if prompted, then click **Open** in the confirmation dialog.
+5. Look for LocalPorts in the **menu bar**, not the Dock. Approval is normally remembered for that copy of the app; a new download or update may prompt again.
+
+If **Open Anyway** is missing, try opening the app again and return to this settings page. A managed Mac may require your administrator's approval. If macOS specifically reports malware or that the app will damage your computer, stop rather than bypassing the warning. Do not disable Gatekeeper globally or run quarantine-removal commands.
+
+Apple Silicon is not a tested release target.
 
 Optional checksum verification: download the matching `.sha256` file into the same folder as the ZIP, then run:
 
