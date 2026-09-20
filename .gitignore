@@ -1,0 +1,28 @@
+# Swift/Xcode build state
+.build/
+.swiftpm/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.xcuserdatad/
+# Local release and verification output
+/dist/
+/artifacts/
+*.dSYM/
+*.log
+# OS/editor files
+.DS_Store
+._*
+.idea/
+.vscode/
+*~
+# Secrets and local configuration
+.env
+.env.*
+*.local
+*.local.*
+*.pem
+*.key
+# Python caches
+__pycache__/
+*.py[cod]
