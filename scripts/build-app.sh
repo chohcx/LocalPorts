@@ -14,7 +14,7 @@ cp "$BIN" "$APP/Contents/MacOS/LocalPorts"
 /usr/bin/python3 - "$APP" <<'PY'
 import pathlib, plistlib, sys
 app = pathlib.Path(sys.argv[1])
-info = dict(CFBundleDevelopmentRegion='en', CFBundleName='LocalPorts', CFBundleDisplayName='LocalPorts', CFBundleIdentifier='local.localports.app', CFBundleVersion='1', CFBundleShortVersionString='1.0.0', CFBundleExecutable='LocalPorts', CFBundleIconFile='localports.icns', CFBundlePackageType='APPL', LSMinimumSystemVersion='13.0', LSUIElement=True, NSHighResolutionCapable=True)
+info = dict(CFBundleDevelopmentRegion='en', CFBundleName='LocalPorts', CFBundleDisplayName='LocalPorts', CFBundleIdentifier='local.localports.app', CFBundleVersion='2', CFBundleShortVersionString='1.1.0', CFBundleExecutable='LocalPorts', CFBundleIconFile='localports.icns', CFBundlePackageType='APPL', LSMinimumSystemVersion='13.0', LSUIElement=True, NSHighResolutionCapable=True)
 with (app/'Contents/Info.plist').open('wb') as f:
     plistlib.dump(info, f)
 PY

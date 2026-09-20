@@ -4,9 +4,17 @@ A lightweight macOS menu-bar app for finding local TCP ports and the processes u
 
 **macOS 13+ · Intel (x86_64) · MIT · No third-party dependencies**
 
-## Download and open
+## Windows (preview)
 
-1. Download **[LocalPorts-1.0.0-macOS-Intel.zip](https://github.com/chohcx/LocalPorts/releases/download/v1.0.0/LocalPorts-1.0.0-macOS-Intel.zip)** from [Releases](https://github.com/chohcx/LocalPorts/releases/latest).
+Download **[LocalPorts-windows-x64.zip](https://github.com/chohcx/LocalPorts/releases/download/v1.1.0/LocalPorts-windows-x64.zip)**, extract the entire folder, then run **LocalPorts.exe**. Windows 10/11 x64; the .NET runtime is included.
+
+Closing or minimizing the window keeps LocalPorts in the notification area. Double-click its tray icon to restore it; right-click → **Quit** to exit. Windows controls whether the icon appears directly or inside the **hidden-icons (^)** flyout; adjust Taskbar settings or drag it as desired.
+
+The Windows build is unsigned and may trigger SmartScreen. Only run trusted downloads. This is an initial Windows implementation, not visual parity with the macOS panel. Windows CI verifies listener discovery and tray lifecycle; desktop appearance and real Explorer interaction still need manual testing. See the [Windows guide](windows/README.md) for safety differences and build instructions.
+
+## Download and open (macOS)
+
+1. Download **[LocalPorts-1.1.0-macOS-Intel.zip](https://github.com/chohcx/LocalPorts/releases/download/v1.1.0/LocalPorts-1.1.0-macOS-Intel.zip)** from [Releases](https://github.com/chohcx/LocalPorts/releases/latest).
 2. Unzip it and drag **LocalPorts.app** into **Applications**.
 3. Double-click **LocalPorts.app** to launch.
 4. Click its **icon and port count in the macOS menu bar**. There is no Dock icon.
@@ -28,7 +36,7 @@ Apple Silicon is not a tested release target.
 Optional checksum verification: download the matching `.sha256` file into the same folder as the ZIP, then run:
 
 ```sh
-shasum -a 256 -c LocalPorts-1.0.0-macOS-Intel.zip.sha256
+shasum -a 256 -c LocalPorts-1.1.0-macOS-Intel.zip.sha256
 ```
 
 ## Launch from Terminal

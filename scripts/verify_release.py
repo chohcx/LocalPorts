@@ -8,7 +8,7 @@ import tempfile
 import zipfile
 
 root = pathlib.Path(__file__).resolve().parent.parent
-archive = root / 'dist/LocalPorts-1.0.0-macOS-Intel.zip'
+archive = root / 'dist/LocalPorts-1.1.0-macOS-Intel.zip'
 assert archive.is_file(), 'Release ZIP is missing'
 checksum = archive.with_suffix('.zip.sha256')
 assert checksum.read_text().strip() == hashlib.sha256(archive.read_bytes()).hexdigest() + '  ' + archive.name
@@ -20,8 +20,8 @@ with tempfile.TemporaryDirectory(prefix='localports-release-') as temporary:
     subprocess.run(['/usr/bin/ditto', '-x', '-k', str(archive), temporary], check=True)
     app = pathlib.Path(temporary) / 'LocalPorts.app'
     info = plistlib.loads((app / 'Contents/Info.plist').read_bytes())
-    assert info['CFBundleShortVersionString'] == '1.0.0'
-    assert info['CFBundleVersion'] == '1'
+    assert info['CFBundleShortVersionString'] == '1.1.0'
+    assert info['CFBundleVersion'] == '2'
     assert info['LSMinimumSystemVersion'] == '13.0'
     assert info['CFBundleDevelopmentRegion'] == 'en'
     assert info['LSUIElement'] is True
