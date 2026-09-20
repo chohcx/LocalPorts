@@ -105,7 +105,7 @@ struct PortsView: View {
                     }
                     ForEach(store.visible) { entry in
                         row(entry)
-                        Divider().opacity(0.45)
+                        Divider().padding(.horizontal, 12).opacity(0.30)
                     }
                 }
             }.frame(height: 330)

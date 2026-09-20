@@ -17,6 +17,8 @@ assert 'HStack(alignment: .center, spacing: 10)' in source, 'Explicit header ver
 assert '.frame(width: 500)' in source, 'Keep the panel compact on a 13-inch display'
 for symbol in ['terminal', 'cpu', 'memorychip', 'clock', 'chevron.right']:
     assert f'"{symbol}"' in source, f'Missing compact metadata/chevron icon: {symbol}'
+assert 'Divider().padding(.horizontal, 12).opacity(0.30)' in source, 'Row separators must end inside rounded hover corners without changing vertical geometry'
+assert 'Color.primary.opacity(0.045) : Color.clear, in: RoundedRectangle(cornerRadius: 8)' in source, 'Subtle neutral rounded row hover'
 assert '.contentShape(Rectangle())' in source and '.onHover' in source
 assert '.frame(width: 24, height: 24)' in source, 'Centered trailing chevron target'
 assert 'minHeight: 56' in source, 'Full-width header must have a comfortable hit target'

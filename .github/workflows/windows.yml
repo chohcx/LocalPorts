@@ -1,0 +1,42 @@
+name: Windows
+on:
+  push:
+    paths: ['windows/**', 'assets/brand/**', '.github/workflows/windows.yml']
+  pull_request:
+    paths: ['windows/**', 'assets/brand/**', '.github/workflows/windows.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Core tests
+        run: dotnet test windows/LocalPorts.Tests/LocalPorts.Tests.csproj -c Release --logger trx
+      - name: Publish self-contained x64
+        run: dotnet publish windows/LocalPorts/LocalPorts.csproj -c Release -r win-x64 --self-contained true -o windows/out/LocalPorts
+      - name: Real listener and tray lifecycle smoke test
+        shell: pwsh
+        run: |
+          $p = Start-Process windows/out/LocalPorts/LocalPorts.exe -ArgumentList '--smoke-test' -PassThru
+          if (-not $p.WaitForExit(60000)) { $p.Kill(); throw 'Smoke test timed out' }
+          if ($p.ExitCode -ne 0) {
+            if (Test-Path smoke-error.txt) { Get-Content smoke-error.txt }
+            throw "Smoke test failed: $($p.ExitCode)"
+          }
+      - name: Package
+        shell: pwsh
+        run: |
+          Copy-Item windows/README.md windows/out/LocalPorts/README.md
+          Copy-Item LICENSE windows/out/LocalPorts/LICENSE
+          Compress-Archive -Path windows/out/LocalPorts -DestinationPath windows/out/LocalPorts-windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: LocalPorts-windows-x64
+          path: windows/out/LocalPorts-windows-x64.zip
+          if-no-files-found: error

@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup><OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework><UseWindowsForms>true</UseWindowsForms><EnableWindowsTargeting>true</EnableWindowsTargeting><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><ApplicationManifest>app.manifest</ApplicationManifest><ApplicationIcon Condition="Exists('../../assets/brand/localports.ico')">../../assets/brand/localports.ico</ApplicationIcon></PropertyGroup>
+ <ItemGroup><ProjectReference Include="../LocalPorts.Core/LocalPorts.Core.csproj"/><Content Include="../../assets/brand/localports.ico" Condition="Exists('../../assets/brand/localports.ico')" Link="localports.ico" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/></ItemGroup>
+</Project>

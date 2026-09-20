@@ -71,7 +71,7 @@ struct PortRow: View {
                     .background(geometry("header"))
                     .background { if let receive = onNativeHeader { HeaderFrameProbe(receive: receive) } }
                     .contentShape(Rectangle())
-                    .background(hovered ? Color.primary.opacity(0.07) : Color.clear, in: RoundedRectangle(cornerRadius: 7))
+                    .background(hovered ? Color.primary.opacity(0.045) : Color.clear, in: RoundedRectangle(cornerRadius: 8))
             }.buttonStyle(.plain)
                 .onHover { hovered = $0 }
                 .animation(reduceMotion ? nil : .easeOut(duration: 0.12), value: hovered)
