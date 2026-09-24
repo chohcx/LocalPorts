@@ -1,25 +1,27 @@
 using System.ComponentModel;
+using LocalPorts.Core;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 namespace LocalPorts;
-internal record Listener(int Pid, string Name, string Runtime, string Address, int Port, long Start, string? Owner, string? Path, long Memory, TimeSpan Cpu) {
- public string Binding => Address.Contains(':') ? $"[{Address}]:{Port}" : $"{Address}:{Port}";
-}
 internal static class Scanner {
  internal static List<Listener> Scan() {
   var endpoints = Read(2).Concat(Read(23)).ToArray();
   var result = new List<Listener>();
   foreach(var group in endpoints.GroupBy(e=>e.Pid)) {
-   string name="Unavailable", runtime="Unknown"; string? owner=null,path=null; long start=0,memory=0; TimeSpan cpu=default;
+   string name="Unavailable"; string? owner=null,path=null; long start=0; long? memory=null; TimeSpan? cpu=null;
+   // Hold the identity handle while collecting metadata; unavailable fields are independent.
+   using var handle=Native.OpenProcess(0x1000,false,group.Key);
+   try { (start,owner)=Native.Identity(handle); } catch { }
    try {
     using var p=Process.GetProcessById(group.Key);
-    name=p.ProcessName; memory=p.WorkingSet64; cpu=p.TotalProcessorTime;
-    runtime = name.ToLowerInvariant() switch { "node" => "Node.js", "python" or "python3" or "pythonw" => "Python", "java" or "javaw" => "Java", "dotnet" => ".NET", "ruby" => "Ruby", "php" => "PHP", _ => "Native / other" };
-    using var handle=Native.OpenProcess(0x1000,false,group.Key);
-    (start,owner)=Native.Identity(handle);
+    try { name=p.ProcessName; } catch { }
+    try { memory=p.WorkingSet64; } catch { }
+    try { cpu=p.TotalProcessorTime; } catch { }
     try { path=p.MainModule?.FileName; } catch { }
-   } catch { /* Protected/exited processes remain visible, with actions disabled. */ }
+   } catch { /* Protected/exited processes remain visible in Show all. */ }
+   if(string.IsNullOrWhiteSpace(name))name="Unavailable";
+   var runtime=RuntimeHint.FromName(name);
    foreach(var e in group) result.Add(new Listener(e.Pid,name,runtime,e.Address,e.Port,start,owner,path,memory,cpu));
   }
   return result.OrderBy(r=>r.Port).ThenBy(r=>r.Pid).ToList();

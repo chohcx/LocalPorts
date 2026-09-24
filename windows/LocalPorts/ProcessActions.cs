@@ -4,7 +4,7 @@ using LocalPorts.Core;
 namespace LocalPorts;
 internal static class ProcessActions {
  internal static void Stop(Listener row, IWin32Window owner) {
-  if(MessageBox.Show(owner,$"Request {row.Name} (PID {row.Pid}) to close? All of its listening ports are affected.","Close process",MessageBoxButtons.YesNo,MessageBoxIcon.Warning)!=DialogResult.Yes) return;
+  if(MessageBox.Show(owner,$"Request {row.Name} (PID {row.Pid}) to close? All of its listening ports are affected.","Close process",MessageBoxButtons.YesNo,MessageBoxIcon.Warning,MessageBoxDefaultButton.Button2)!=DialogResult.Yes) return;
   // Hold the process object handle across confirmation and action. Never kill by PID.
   using var handle=Native.OpenProcess(0x1001,false,row.Pid);
   var identity=Native.Identity(handle);

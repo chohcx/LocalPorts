@@ -12,7 +12,10 @@ internal static class Native {
  internal static string CurrentSid => WindowsIdentity.GetCurrent().User!.Value;
  internal static (long Start, string? Owner) Identity(SafeProcessHandle handle) {
   if(handle.IsInvalid || !GetProcessTimes(handle,out var start,out _,out _,out _)) throw new Win32Exception();
-  if(!OpenProcessToken(handle,8,out var token)) throw new Win32Exception();
-  using(token) using(var identity = new WindowsIdentity(token.DangerousGetHandle())) return (start,identity.User?.Value);
+  if(!OpenProcessToken(handle,8,out var token)) return (start,null);
+  using(token) {
+   try { using var identity = new WindowsIdentity(token.DangerousGetHandle()); return (start,identity.User?.Value); }
+   catch { return (start,null); }
+  }
  }
 }
