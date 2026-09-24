@@ -6,7 +6,9 @@ A lightweight macOS menu-bar app for finding local TCP ports and the processes u
 
 ## Windows (preview)
 
-Download **[LocalPorts-windows-x64.zip](https://github.com/chohcx/LocalPorts/releases/download/v1.1.0/LocalPorts-windows-x64.zip)**, extract the entire folder, then run **LocalPorts.exe**. Windows 10/11 x64; the .NET runtime is included.
+Download **[LocalPorts-windows-x64.zip](https://github.com/chohcx/LocalPorts/releases/download/v1.1.1/LocalPorts-windows-x64.zip)**, extract the entire folder, then run **LocalPorts.exe**. Windows 10/11 x64; the .NET runtime is included.
+
+By default, only recognized developer runtimes are shown. Enable **Show all** to include system and other applications. Each process/port appears once, with its IPv4/IPv6 bindings in Details. Custom-named development executables may require **Show all**.
 
 Closing or minimizing the window keeps LocalPorts in the notification area. Double-click its tray icon to restore it; right-click → **Quit** to exit. Windows controls whether the icon appears directly or inside the **hidden-icons (^)** flyout; adjust Taskbar settings or drag it as desired.
 
